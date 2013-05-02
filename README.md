@@ -23,6 +23,7 @@ Here's some sample code.
     import java.io.StringReader;
     import java.util.Collection;
     import java.util.List;
+    
     class Test {
        public static void main(String []args) throws Exception {
            String text = "A quick brown fox jumped over the lazy dog.";
