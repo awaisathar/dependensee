@@ -273,7 +273,9 @@ is divided into following sections:
                     </src>
                     <classpath>
                         <path path="@{classpath}"/>
+                    	<path id="org.junit" location="C:\eclipse\plugins\org.junit_4.11.0.v201303080030/junit.jar" />
                     </classpath>
+
                     <compilerarg line="${endorsed.classpath.cmd.line.arg}"/>
                     <compilerarg line="${javac.compilerargs}"/>
                     <compilerarg value="-processorpath"/>

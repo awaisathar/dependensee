@@ -55,6 +55,8 @@ public class Main {
             writeImage(args[0], args[1]);
         } else if (args.length == 3 && "-t".equalsIgnoreCase(args[0])) {
             writeFromTextFile(args[1], args[2]);
+        } else if (args.length == 4 && "-s".equalsIgnoreCase(args[0])) {
+        	writeImage(args[2], args[3], Integer.parseInt(args[1])); 
         } else {
             printHelp();
         }
