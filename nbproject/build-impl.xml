@@ -274,6 +274,7 @@ is divided into following sections:
                     <classpath>
                         <path path="@{classpath}"/>
                     </classpath>
+
                     <compilerarg line="${endorsed.classpath.cmd.line.arg}"/>
                     <compilerarg line="${javac.compilerargs}"/>
                     <compilerarg value="-processorpath"/>
