@@ -42,7 +42,7 @@ public class MainTest {
     public static void tearDownClass() {
         File f = new File("image.png");
         if (f.exists()) {
-            f.delete();
+           f.delete();
         }
     }
 
@@ -57,9 +57,10 @@ public class MainTest {
     /**
      * Test of writeImage method, of class Main.
      */
+
     @Test
     public void testWriteImage() throws Exception {
-        String text = "A quick brown fox jumped over the lazy dog.";
+        String text = "A quick brown fox jumped over the lazy dog. اردو";
         TreebankLanguagePack tlp = new PennTreebankLanguagePack();
         GrammaticalStructureFactory gsf = tlp.grammaticalStructureFactory();
         LexicalizedParser lp = LexicalizedParser.loadModel("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
