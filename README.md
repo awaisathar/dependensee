@@ -31,7 +31,7 @@ Here's some sample code.
            String text = "A quick brown fox jumped over the lazy dog.";
             TreebankLanguagePack tlp = new PennTreebankLanguagePack();
             GrammaticalStructureFactory gsf = tlp.grammaticalStructureFactory();
-            LexicalizedParser lp = LexicalizedParser.loadModel("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
+            LexicalizedParser lp = LexicalizedParser.loadModel();
             lp.setOptionFlags(new String[]{"-maxLength", "500", "-retainTmpSubcategories"});
             TokenizerFactory<CoreLabel> tokenizerFactory =
                     PTBTokenizer.factory(new CoreLabelTokenFactory(), "");
