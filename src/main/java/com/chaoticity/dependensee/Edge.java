@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 /**
  *
- * @author aa496
+ * @author Awais Athar
  */
 public class Edge implements Serializable{
 

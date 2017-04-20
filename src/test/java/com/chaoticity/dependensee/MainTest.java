@@ -27,7 +27,7 @@ import org.junit.Test;
 
 /**
  *
- * @author Awais
+ * @author Awais Athar
  */
 public class MainTest {
 
@@ -63,14 +63,14 @@ public class MainTest {
         String text = "A quick brown fox jumped over the lazy dog. اردو";
         TreebankLanguagePack tlp = new PennTreebankLanguagePack();
         GrammaticalStructureFactory gsf = tlp.grammaticalStructureFactory();
-        LexicalizedParser lp = LexicalizedParser.loadModel("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
+        LexicalizedParser lp = LexicalizedParser.loadModel();
         lp.setOptionFlags(new String[]{"-maxLength", "500", "-retainTmpSubcategories"});
         TokenizerFactory<CoreLabel> tokenizerFactory =
                 PTBTokenizer.factory(new CoreLabelTokenFactory(), "");
         List<CoreLabel> wordList = tokenizerFactory.getTokenizer(new StringReader(text)).tokenize();
         Tree tree = lp.apply(wordList);
         GrammaticalStructure gs = gsf.newGrammaticalStructure(tree);
-        Collection<TypedDependency> tdl = gs.typedDependenciesCCprocessed(true);
+        Collection<TypedDependency> tdl = gs.typedDependenciesCollapsed();
         Main.writeImage(tree, tdl, "image.png", 3);
         assert (new File("image.png").exists());
     }

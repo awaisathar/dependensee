@@ -5,19 +5,17 @@
 package com.chaoticity.dependensee;
 
 import edu.stanford.nlp.util.Pair;
-import java.awt.Rectangle;
+
+import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
 import java.util.Queue;
-import java.util.Set;
 
 /**
  *
- * @author aa496
+ * @author awais
  */
 public class Node implements Serializable {
 

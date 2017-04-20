@@ -4,18 +4,16 @@
  */
 package com.chaoticity.dependensee;
 
-import edu.stanford.nlp.ling.Sentence;
 import edu.stanford.nlp.ling.TaggedWord;
+
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.TreeMap;
 
 /**
  *
- * @author aa496
+ * @author Awais Athar
  */
 public class Graph implements Serializable {
 
