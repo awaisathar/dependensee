@@ -21,6 +21,14 @@ public class Edge implements Serializable{
     public boolean visible = false;
     public int height;
 
+    public Edge(int sourceIndex, int targetIndex,String label) {
+        this.label = label;
+        this.sourceIndex = sourceIndex;
+        this.targetIndex = targetIndex;
+    }
+
+
+
     @Override
     public String toString() {
 	return label+"["+sourceIndex+"->" + targetIndex+"]";

@@ -9,21 +9,16 @@ import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
 import edu.stanford.nlp.process.CoreLabelTokenFactory;
 import edu.stanford.nlp.process.PTBTokenizer;
 import edu.stanford.nlp.process.TokenizerFactory;
-import edu.stanford.nlp.trees.GrammaticalStructure;
-import edu.stanford.nlp.trees.GrammaticalStructureFactory;
-import edu.stanford.nlp.trees.PennTreebankLanguagePack;
-import edu.stanford.nlp.trees.Tree;
-import edu.stanford.nlp.trees.TreebankLanguagePack;
-import edu.stanford.nlp.trees.TypedDependency;
+import edu.stanford.nlp.trees.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import java.io.File;
 import java.io.StringReader;
 import java.util.Collection;
 import java.util.List;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 /**
  *
@@ -38,7 +33,7 @@ public class MainTest {
     public static void setUpClass() {
     }
 
-    @AfterClass
+    //@AfterClass
     public static void tearDownClass() {
         File f = new File("image.png");
         if (f.exists()) {
@@ -60,7 +55,7 @@ public class MainTest {
 
     @Test
     public void testWriteImage() throws Exception {
-        String text = "A quick brown fox jumped over the lazy dog. اردو";
+        String text = "They buy and sell books.";
         TreebankLanguagePack tlp = new PennTreebankLanguagePack();
         GrammaticalStructureFactory gsf = tlp.grammaticalStructureFactory();
         LexicalizedParser lp = LexicalizedParser.loadModel();
@@ -72,6 +67,13 @@ public class MainTest {
         GrammaticalStructure gs = gsf.newGrammaticalStructure(tree);
         Collection<TypedDependency> tdl = gs.typedDependenciesCollapsed();
         Main.writeImage(tree, tdl, "image.png", 3);
+        assert (new File("image.png").exists());
+    }
+
+    @Test
+    public void testWriteFromCoNLLFile() throws Exception {
+        String infile="conll.txt";
+        Main.writeFromCONLLFile("conll.txt","image.png");
         assert (new File("image.png").exists());
     }
 }
