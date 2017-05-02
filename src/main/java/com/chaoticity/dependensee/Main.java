@@ -86,7 +86,19 @@ public class Main {
         }
         return g;
     }
-    
+
+
+    private static Graph getGraph(Collection<TypedDependency> tdl) {
+        Graph g = new Graph();
+        for (TypedDependency td: tdl) {
+            g.addNode(td.dep().word()+"-"+td.dep().index(), td.dep().tag());
+            g.addNode(td.gov().word()+"-"+td.gov().index(), td.gov().tag());
+            g.addEdge(td.gov().index() - 1, td.dep().index() - 1, td.reln().toString());
+        }
+        return g;
+    }
+
+
     public static Graph getGraph(String sentence) throws Exception {
         LexicalizedParser lp = LexicalizedParser.loadModel("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
         lp.setOptionFlags(new String[]{"-maxLength", "500", "-retainTmpSubcategories"});
@@ -111,7 +123,6 @@ public class Main {
     
     private static Graph getGraph(Tree tree, Collection<TypedDependency> tdl) throws Exception {
         ArrayList<TaggedWord> words = tree.taggedYield();
-        GrammaticalStructure gs = gsf.newGrammaticalStructure(tree);
         Graph g = new Graph(words);
         for (TypedDependency td : tdl) {
             g.addEdge(td.gov().index() - 1, td.dep().index() - 1, td.reln().toString());
@@ -124,7 +135,6 @@ public class Main {
                 g.setRoot(g.nodes.get(0).label);
             }
         }
-        
         return g;
     }
 
@@ -206,22 +216,39 @@ public class Main {
     
     public static void writeImage(Tree tree, Collection<TypedDependency> tdl, String outFile) throws Exception {
         Graph g = getGraph(tree, tdl);
-        BufferedImage image = createTextImage(g, 1);
-        ImageIO.write(image, "png", new File(outFile));
+        writeImage(g,outFile,1);
     }
-    
+
+
+
     public static void writeImage(Tree tree, Collection<TypedDependency> tdl, String outFile, int scale) throws Exception {
         Graph g = getGraph(tree, tdl);
-        BufferedImage image = createTextImage(g, scale);
-        ImageIO.write(image, "png", new File(outFile));
+        writeImage(g,outFile,scale);
     }
     
     public static void writeImage(Tree tree, String outFile, int scale) throws Exception {
         Graph g = getGraph(tree);
+        writeImage(g,outFile,scale);
+    }
+
+    public static void writeImage(Graph g, String outFile) throws Exception {
+        writeImage(g,outFile,1);
+    }
+
+    public static void writeImage(Collection<TypedDependency> tdl, String outFile) throws Exception {
+        writeImage(tdl,outFile,1);
+    }
+
+    public static void writeImage(Collection<TypedDependency> tdl, String outFile, int scale) throws Exception {
+        Graph g = getGraph(tdl);
+        writeImage(g,outFile,scale);
+    }
+
+    public static void writeImage(Graph g, String outFile, int scale) throws Exception {
         BufferedImage image = createTextImage(g, scale);
         ImageIO.write(image, "png", new File(outFile));
     }
-    
+
     private static BufferedImage createTextImage(Graph graph, int scale) throws Exception {
         
         Font wordFont = new Font("Arial", Font.PLAIN, 12 * scale);

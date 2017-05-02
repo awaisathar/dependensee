@@ -60,7 +60,7 @@ public class MainTest {
 
     @Test
     public void testWriteImage() throws Exception {
-        String text = "A quick brown fox jumped over the lazy dog. اردو";
+        String text = "A quick brown fox jumped over the lazy dog.";
         TreebankLanguagePack tlp = new PennTreebankLanguagePack();
         GrammaticalStructureFactory gsf = tlp.grammaticalStructureFactory();
         LexicalizedParser lp = LexicalizedParser.loadModel();
@@ -71,7 +71,7 @@ public class MainTest {
         Tree tree = lp.apply(wordList);
         GrammaticalStructure gs = gsf.newGrammaticalStructure(tree);
         Collection<TypedDependency> tdl = gs.typedDependenciesCollapsed();
-        Main.writeImage(tree, tdl, "image.png", 3);
+        Main.writeImage(tdl, "image.png", 3);
         assert (new File("image.png").exists());
     }
 }
