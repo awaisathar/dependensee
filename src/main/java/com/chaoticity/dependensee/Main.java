@@ -38,24 +38,12 @@ public class Main {
     
     public static void main(String[] args) throws Exception {
 
-
-        /*
-         if (args.length < 3) {
-         printHelp();
-         }
-         else if ("js".equalsIgnoreCase(args[0]))
-         {
-         writeJavaScript(args[1], args[2]);
-         }else if ("png".equalsIgnoreCase(args[0]))
-         {
-         writeImage(args[1], args[2]);
-         } else {
-         printHelp();
-         }*/
         if (args.length == 2) {
             writeImage(args[0], args[1]);
         } else if (args.length == 3 && "-t".equalsIgnoreCase(args[0])) {
             writeFromTextFile(args[1], args[2]);
+        } else if (args.length == 3 && "-c".equalsIgnoreCase(args[0])) {
+            writeFromCONLLFile(args[1], args[2]);
         } else if (args.length == 4 && "-s".equalsIgnoreCase(args[0])) {
         	writeImage(args[2], args[3], Integer.parseInt(args[1])); 
         } else {
@@ -65,7 +53,9 @@ public class Main {
     
     private static void printHelp() throws Exception {
         System.out.println("Usage: com.chaoticity.dependensee.Main <sentence> <image file>");
-        System.out.println("Usage: com.chaoticity.dependensee.Main -t <input file> <image file>");
+        System.out.println("Usage: com.chaoticity.dependensee.Main -t <input Stanford file> <image file>");
+        System.out.println("Usage: com.chaoticity.dependensee.Main -c <input CoNLL file> <image file>");
+
     }
     
     private static Graph getGraph(Tree tree) throws Exception {
@@ -249,7 +239,7 @@ public class Main {
         ImageIO.write(image, "png", new File(outFile));
     }
 
-    private static BufferedImage createTextImage(Graph graph, int scale) throws Exception {
+    public static BufferedImage createTextImage(Graph graph, int scale) throws Exception {
         
         Font wordFont = new Font("Arial", Font.PLAIN, 12 * scale);
         FontRenderContext frc = new FontRenderContext(null, true, false);
@@ -399,8 +389,40 @@ public class Main {
             Node depNode = g.addNode(dep, "");
             g.addEdge(govNode, depNode, rel);
         }
-        
+
         BufferedImage image = createTextImage(g, 1);
+        ImageIO.write(image, "png", new File(outfile));
+    }
+
+    public static void writeFromCONLLFile(String infile, String outfile) throws Exception {
+        Graph g = new Graph();
+        BufferedReader input = new BufferedReader(new FileReader(infile));
+        String line = null;
+        List<Edge> tempEdges = new ArrayList<Edge>();
+        while ((line = input.readLine()) != null) {
+            if ("".equals(line)) break; // stop at sentence boundary
+            if (line.startsWith("#")) continue; // skip comments
+
+            String[] parts = line.split("\\s+");
+
+            if (!parts[0].matches("^-?\\d+$")) continue; //skip ranges
+
+            g.addNode(parts[1],Integer.parseInt(parts[0]),parts[2]);
+            tempEdges.add( new Edge(
+                    Integer.parseInt(parts[6])-1,
+                    Integer.parseInt(parts[0])-1,
+                    parts[7]));
+
+        }
+        for (Edge e: tempEdges ) {
+            if (e.sourceIndex==-1 ) {
+                g.setRoot(e.sourceIndex);
+                continue;
+            }
+            g.addEdge(g.nodes.get(e.sourceIndex), g.nodes.get(e.targetIndex),e.label);
+        }
+
+        BufferedImage image = Main.createTextImage(g,1);
         ImageIO.write(image, "png", new File(outfile));
     }
 }

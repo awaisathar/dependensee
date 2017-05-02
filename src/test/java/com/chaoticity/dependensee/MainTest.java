@@ -74,4 +74,11 @@ public class MainTest {
         Main.writeImage(tdl, "image.png", 3);
         assert (new File("image.png").exists());
     }
+
+    @Test
+    public void testWriteFromCoNLLFile() throws Exception {
+        String infile="conll.txt";
+        Main.writeFromCONLLFile("conll.txt","image.png");
+        assert (new File("image.png").exists());
+    }
 }

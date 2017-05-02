@@ -39,12 +39,9 @@ public class Graph implements Serializable {
             root = nodes.get(targetIndex);
             return null;
         }
-        Edge e = new Edge();
+        Edge e = new Edge(sourceIndex, targetIndex, label);
         e.source = nodes.get(sourceIndex);
         e.target = nodes.get(targetIndex);
-        e.label = label;
-        e.sourceIndex = sourceIndex;
-        e.targetIndex = targetIndex;
         edges.add(e);
         e.target.parent = e.source;
         e.source.addChild(e.target);
@@ -67,6 +64,21 @@ public class Graph implements Serializable {
         return n;
     }
 
+    public Node addNode(String label, int idx, String pos) {
+        for (Node node : nodes.values()) {
+            if (node.label.equals(label)) {
+                return node;
+            }
+        }
+        Node n = new Node(label, idx, pos);
+        if (n.idx>0) {
+            nodes.put(n.idx - 1, n);
+        } else {
+            root = n;
+        }
+        return n;
+    }
+
     public Node findNode(int i) {
         return nodes.get(i);
     }
@@ -79,6 +91,10 @@ public class Graph implements Serializable {
             }
         }
         throw new Exception("root not found! " + label);
+    }
+
+    void setRoot(int idx) throws Exception {
+        root = nodes.get(idx);
     }
 
     public StringBuilder recurse(StringBuilder b) {
