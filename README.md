@@ -3,7 +3,7 @@ DependenSee: A Dependency Parse Visualisation Tool
 
 Here's the source for DependenSee, a dependency relation visualisation tool for the Stanford parser. 
 From the sentence, "Example isn't another way to teach, it is the only way to teach.", it produces the image below.
-![Output PNG](http://chaoticity.com/images/out.png) 
+![example.png](example.png) 
 
 More details can be found on my [original blog post](http://chaoticity.com/dependensee-a-dependency-parse-visualisation-tool/)
 
