@@ -40,7 +40,7 @@ public class MainTest {
 
     @AfterClass
     public static void tearDownClass() {
-        File f = new File("image.png");
+        File f = new File("example.png");
         if (f.exists()) {
            f.delete();
         }
@@ -54,13 +54,19 @@ public class MainTest {
     public void tearDown() {
     }
 
+    @Test
+    public void testWriteFromCoNLLFile() throws Exception {
+        Main.writeFromCONLLFile("conll.txt","image.png");
+        assert (new File("example.png").exists());
+    }
+
     /**
      * Test of writeImage method, of class Main.
      */
 
     @Test
     public void testWriteImage() throws Exception {
-        String text = "A quick brown fox jumped over the lazy dog.";
+        String text =  "Example isn't another way to teach, it is the only way to teach.";
         TreebankLanguagePack tlp = new PennTreebankLanguagePack();
         GrammaticalStructureFactory gsf = tlp.grammaticalStructureFactory();
         LexicalizedParser lp = LexicalizedParser.loadModel();
@@ -71,14 +77,9 @@ public class MainTest {
         Tree tree = lp.apply(wordList);
         GrammaticalStructure gs = gsf.newGrammaticalStructure(tree);
         Collection<TypedDependency> tdl = gs.typedDependenciesCollapsed();
-        Main.writeImage(tdl, "image.png", 3);
-        assert (new File("image.png").exists());
+        Main.writeImage(tdl, "example.png", 3);
+        assert (new File("example.png").exists());
     }
 
-    @Test
-    public void testWriteFromCoNLLFile() throws Exception {
-        String infile="conll.txt";
-        Main.writeFromCONLLFile("conll.txt","image.png");
-        assert (new File("image.png").exists());
-    }
+
 }

@@ -1,11 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.chaoticity.dependensee;
 
-/**
- *
+/*
  * @author Awais Athar
  */
 
@@ -33,8 +28,8 @@ import java.util.List;
 
 public class Main {
     
-    private static TreebankLanguagePack tlp = new PennTreebankLanguagePack();
-    private static GrammaticalStructureFactory gsf = tlp.grammaticalStructureFactory();
+    private static final TreebankLanguagePack pennTreebankLanguagePack = new PennTreebankLanguagePack();
+    private static final GrammaticalStructureFactory grammaticalStructureFactory = pennTreebankLanguagePack.grammaticalStructureFactory();
     
     public static void main(String[] args) throws Exception {
 
@@ -60,7 +55,7 @@ public class Main {
     
     private static Graph getGraph(Tree tree) throws Exception {
         ArrayList<TaggedWord> words = tree.taggedYield();
-        GrammaticalStructure gs = gsf.newGrammaticalStructure(tree);
+        GrammaticalStructure gs = grammaticalStructureFactory.newGrammaticalStructure(tree);
         Collection<TypedDependency> tdl = gs.typedDependencies();
         Graph g = new Graph(words);
         for (TypedDependency td : tdl) {
@@ -70,7 +65,7 @@ public class Main {
             g.setRoot(GrammaticalStructure.getRoots(tdl).iterator().next().gov().toString());
         } catch (Exception ex) {
             //System.err.println("Cannot find dependency graph root. Setting root to first");
-            if (g.nodes.size() > 0) {
+            if (!g.nodes.isEmpty()) {
                 g.setRoot(g.nodes.get(0).label);
             }
         }
@@ -96,7 +91,7 @@ public class Main {
                 PTBTokenizer.factory(new CoreLabelTokenFactory(), "");
         List<CoreLabel> wordList = tokenizerFactory.getTokenizer(new StringReader(sentence)).tokenize();
         Tree tree = lp.apply(wordList);
-        GrammaticalStructure gs = gsf.newGrammaticalStructure(tree);
+        GrammaticalStructure gs = grammaticalStructureFactory.newGrammaticalStructure(tree);
         Collection<TypedDependency> tdl = gs.typedDependencies();
         return getGraph(tree, tdl);
     }
@@ -106,7 +101,7 @@ public class Main {
                 PTBTokenizer.factory(new CoreLabelTokenFactory(), "");
         List<CoreLabel> wordList = tokenizerFactory.getTokenizer(new StringReader(sentence)).tokenize();
         Tree tree = lp.apply(wordList);
-        GrammaticalStructure gs = gsf.newGrammaticalStructure(tree);
+        GrammaticalStructure gs = grammaticalStructureFactory.newGrammaticalStructure(tree);
         Collection<TypedDependency> tdl = gs.typedDependencies();
         return getGraph(tree, tdl);
     }
@@ -121,7 +116,7 @@ public class Main {
             g.setRoot(GrammaticalStructure.getRoots(tdl).iterator().next().gov().toString());
         } catch (Exception ex) {
             //System.err.println("Cannot find dependency graph root. Setting root to first");
-            if (g.nodes.size() > 0) {
+            if (!g.nodes.isEmpty()) {
                 g.setRoot(g.nodes.get(0).label);
             }
         }
@@ -137,14 +132,14 @@ public class Main {
                 if (!e.visible || n == e) {
                     continue;
                 }
-                int eFirst = e.sourceIndex < e.targetIndex ? e.sourceIndex : e.targetIndex;
-                int eSecond = e.sourceIndex < e.targetIndex ? e.targetIndex : e.sourceIndex;
-                int nFirst = n.sourceIndex < n.targetIndex ? n.sourceIndex : n.targetIndex;
-                int nSecond = n.sourceIndex < n.targetIndex ? n.targetIndex : n.sourceIndex;
+                int eFirst = Math.min(e.sourceIndex, e.targetIndex);
+                int eSecond = Math.max(e.sourceIndex, e.targetIndex);
+                int nFirst = Math.min(n.sourceIndex, n.targetIndex);
+                int nSecond = Math.max(n.sourceIndex, n.targetIndex);
                 if (e.height == height
                         && ((nFirst > eFirst && nFirst < eSecond)
                         || (nSecond > eFirst && nSecond < eSecond)
-                        || (eSecond > nFirst && eSecond < nSecond)
+                        || (eFirst > nFirst && eFirst < nSecond)
                         || (eSecond > nFirst && eSecond < nSecond)
                         || (n.targetIndex == eFirst)
                         || (n.targetIndex == eSecond))) {
@@ -291,15 +286,12 @@ public class Main {
         // draw lines
         int lineDistance = 5 * scale;
         int arrowBase = 2 * scale;
-        int maxHeight = 0;
+        int minHeight = Integer.MAX_VALUE;;
         for (Integer i : graph.nodes.keySet()) {
             Node node = graph.nodes.get(i);
             int spacer = (int) node.position.getWidth() / 2 - (node.outEdges.size() / 2 * lineDistance);
             for (Edge e : node.outEdges) {
                 int height = getNextHeight(graph, e);
-                if (height > maxHeight) {
-                    maxHeight = height;
-                }
                 e.height = height;
                 int targetSpacer = (int) e.target.position.getWidth() / 2 - ((e.target.outEdges.size() + 2) / 2 * lineDistance);
                 // horizontal line
@@ -308,7 +300,7 @@ public class Main {
                         baseline - (height * spaceHeight),
                         (int) e.target.position.getX() + targetSpacer,
                         baseline - (height * spaceHeight));
-
+                minHeight = Math.min(minHeight,baseline - (height * spaceHeight));
                 // source vertical line
                 g.drawLine(
                         (int) e.source.position.getX() + spacer,
@@ -368,8 +360,8 @@ public class Main {
         }
         
         g.dispose();
-        int ystart = imageHeight - spaceHeight * (maxHeight + 3 * scale);
-        return image.getSubimage(0, ystart, imageWidth, imageHeight - ystart);
+        int yStart = minHeight - 2*spaceHeight  ;
+        return image.getSubimage(0, yStart, imageWidth, imageHeight - yStart);
     }
     
     public static void writeFromTextFile(String infile, String outfile) throws Exception {
@@ -377,7 +369,7 @@ public class Main {
         BufferedReader input = new BufferedReader(new FileReader(infile));
         String line = null;
         while ((line = input.readLine()) != null) {
-            if ("".equals(line)) {
+            if (line.isEmpty()) {
                 continue;
             }
             int relEnd = line.indexOf("(");
@@ -400,7 +392,7 @@ public class Main {
         String line = null;
         List<Edge> tempEdges = new ArrayList<Edge>();
         while ((line = input.readLine()) != null) {
-            if ("".equals(line)) break; // stop at sentence boundary
+            if (line.isEmpty()) break; // stop at sentence boundary
             if (line.startsWith("#")) continue; // skip comments
 
             String[] parts = line.split("\\s+");
